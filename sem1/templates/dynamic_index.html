@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Описание продуктов</title>
+    <style type="text/css">
+        h1 {
+            font-family : 'Verdana';
+            font-size   : 14pt;
+            color       : black;
+            }
+        td {
+            font-family : 'Verdana';
+            font-size   : 12pt;
+            color       : blue;
+            }
+        td.border{
+            font-family : 'Verdana';
+            font-weight : bold;
+            font-size   : 12pt;
+            color       : black;
+            }
+    </style>
+</head>
+<body>
+   <h1 align="center"> {{product_title}} </h1>
+
+    <table border = 1 width = 80%>
+      <tr>
+         <td  class=border align = center> Название </td>
+         <td class = border align = center> Единица </td>
+         <td class = border align = center> Цена </td>
+      </tr>
+     {%for product in products%}
+     <tr>
+        <td align=center>{{product['name']}}</td>
+        <td align=center> {{product['measure']}}</td>
+        <td align = center> {{product['price']}}</td>
+     </tr>
+      {% endfor %}
+    </table>
+
+</body>
+</html>
