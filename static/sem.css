@@ -1,16 +1,14 @@
-h1 {        font-size  : 16pt;
-             color      : black;
-             font-weight : bold
+h1 {
+            font-family : 'Verdana';
+            font-size   : 14pt;
+            color       : red;
             }
- label {     font-size  : 14pt;
-                color      : red
-            }
-  td {      font-family : 'Verdana';
+        td {
+            font-family : 'Verdana';
             font-size   : 12pt;
             color       : blue;
             }
-
-  td.border{
+        td.border{
             font-family : 'Verdana';
             font-weight : bold;
             font-size   : 12pt;
