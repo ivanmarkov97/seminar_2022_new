@@ -1,0 +1,16 @@
+ h1 {
+            font-family : 'Verdana';
+            font-size   : 14pt;
+            color       : red;
+            }
+        td {
+            font-family : 'Verdana';
+            font-size   : 12pt;
+            color       : blue;
+            }
+        td.border{
+            font-family : 'Verdana';
+            font-weight : bold;
+            font-size   : 12pt;
+            color       : black;
+            }

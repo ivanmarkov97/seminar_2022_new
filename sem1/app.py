@@ -25,6 +25,11 @@ def dynamic_index():
     return render_template('dynamic_index.html', product_title=product_title, products=products)
 
 
-if __name__=='__main__':
+@app.route('/test')
+def test_index():
+    return "Changes are done"
+
+
+if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5001, debug=True)
 

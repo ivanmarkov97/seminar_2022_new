@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Результат поиска продукта</title>
+</head>
+<body>
+ <h1 align="center"> Описание продукта </h1>
+
+    <table border = 1 width = 80%>
+      <tr>
+          {% for column in schema %}
+            <td align="center">{{column}}</td>
+          {% endfor %}
+      </tr>
+
+
+
+    </table>
+</body>
+</html>
