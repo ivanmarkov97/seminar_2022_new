@@ -6,8 +6,7 @@ from sql_provider import SQLProvider
 
 
 blueprint_query = Blueprint('blueprint_query', __name__, template_folder='templates')
-print('path=', os.path)
-print('dir=', os.path.dirname(__file__))
+
 provider = SQLProvider(os.path.join(os.path.dirname(__file__), 'sql'))
 
 
