@@ -28,20 +28,18 @@ def start_point():
 
 @app.route('/menu_choice')
 def menu_choice():
-    if session['user_type'] == 'external':
+
+    if session['user_type'] == 2:
         return render_template('external_user_menu.html')
-    elif session['user_type'] == 'internal':
+    elif session['user_type'] == 1:
         return render_template('internal_user_menu.html')
 
 
 
 @app.route('/exit')
 def exit_func():
-    if session['user_type'] == 'external':
-        session.pop('user_id')
-    elif session['user_type'] == 'internal':
-        session.pop('user_group')
     session.pop('user_type')
+    session.pop('user_identity')
     return "До свиданья"
 
 
