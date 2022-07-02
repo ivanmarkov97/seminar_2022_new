@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
- {% block external_user %}
-  <p align = center>
-      <a href={{url_for('blueprint_report.start_report')}}>Создание заказов</a><br><br>
-      <a href={{url_for('blueprint_report.start_report') }}>Просмотр заказов</a> <br><br>
-      <a href="/exit"> Нажмите для выхода из системы</a>
-  </p>
- {% endblock %}
+{% block external_user %}
+<p align="center">
+    <a href="{{ url_for('blueprint_report.start_report') }}">Создание заказов</a><br><br>
+    <a href="{{ url_for('blueprint_report.start_report') }}">Просмотр заказов</a><br><br>
+    <a href="/exit"> Нажмите для выхода из системы</a>
+</p>
+{% endblock %}

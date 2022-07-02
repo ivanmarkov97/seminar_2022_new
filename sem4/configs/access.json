@@ -1,0 +1,11 @@
+{
+  "group1": [
+    "blueprint_report",
+    "blueprint_basket"
+  ],
+  "admin": [
+    "blueprint_basket",
+    "blueprint_report",
+    "blueprint_report.start_report"
+  ]
+}

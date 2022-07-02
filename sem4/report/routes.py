@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template
+
 from access import group_validation, group_required
 
 blueprint_report = Blueprint('blueprint_report', __name__, template_folder='templates')
