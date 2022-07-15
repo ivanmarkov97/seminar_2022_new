@@ -25,8 +25,9 @@ def start_auth():
         if login:
             user_info = define_user(login, password)
             if user_info:
-                session['user_id'] = user_info['user_id']
-                session['user_group'] = user_info['user_group']
+                user_dict = user_info[0]
+                session['user_id'] = user_dict['user_id']
+                session['user_group'] = user_dict['user_group']
                 session.permanent = True
                 return redirect(url_for('menu_choice'))
             else:
