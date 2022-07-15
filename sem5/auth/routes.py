@@ -46,4 +46,4 @@ def define_user(login: str, password: str) -> Optional[Dict]:
             user_info = _user_info
             del _user_info
             break
-    return user_info
+    return user_info[0]

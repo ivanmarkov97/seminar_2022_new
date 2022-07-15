@@ -9,8 +9,8 @@ from access import login_required
 app = Flask(__name__)
 app.secret_key = 'SuperKey'
 
-app.register_blueprint(blueprint_auth)
-app.register_blueprint(blueprint_report)
+app.register_blueprint(blueprint_auth, url_prefix='/auth')
+app.register_blueprint(blueprint_report, url_prefix='/report')
 
 app.config['db_config'] = json.load(open('configs/db.json'))
 app.config['access_config'] = json.load(open('configs/access.json'))
@@ -28,7 +28,7 @@ def menu_choice():
 @login_required
 def exit_func():
     session.clear()
-    return "До свиданья"
+    return render_template('exit.html')
 
 
 if __name__ == '__main__':
