@@ -1,12 +1,19 @@
 {
   "typical": [
-    "blueprint_report"
+      "",
+      "auth",
+      "query",
+      "basket"
   ],
   "admin": [
-    "blueprint_market",
-    "blueprint_report"
+      "",
+      "auth",
+      "query",
+      "basket",
+      "admin"
   ],
-  "external": [
-    "blueprint_market"
+  "unauthorized": [
+    "",
+    "auth"
   ]
 }
