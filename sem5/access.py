@@ -1,43 +1,51 @@
 from functools import wraps
 
-from flask import request, render_template, session, current_app
+from flask import session, render_template, current_app, request, redirect, url_for
 
 
-def login_validation(session: session) -> bool:
-	group = session.get('group', None)
-	if group is not None and group != '':
-		return True
-	return False
+def login_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if 'user_id' in session:
+            return func(*args, **kwargs)
+        return redirect(url_for('blueprint_auth.start_auth'))
+    return wrapper
 
 
-def group_validation(config: dict, request: request) -> bool:
-	endpoint_app = '' if len(request.endpoint.split('.')) == 1 else request.endpoint.split('.')[0]
-	if endpoint_app in config['unauthorized']:
-		return True
-	elif 'group' in session:
-		group = session['group']
-		if group in config and endpoint_app in config[group]:
-			return True
-	return False
+def group_validation(config: dict) -> bool:
+    endpoint_app = request.endpoint.split('.')[0]
+    if 'user_group' in session:
+        user_group = session['user_group']
+        if user_group in config and endpoint_app in config[user_group]:
+            return True
+    return False
 
 
-class AccessManager:
+def group_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        config = current_app.config['access_config']
+        if group_validation(config):
+            return f(*args, **kwargs)
+        return render_template('exceptions/internal_only.html')
+    return wrapper
 
-	@staticmethod
-	def login_required(f):
-		@wraps(f)
-		def wrapper(*args, **kwargs):
-			if login_validation(session):
-				return f(*args, **kwargs)
-			return render_template('permission.html')
-		return wrapper
 
-	@staticmethod
-	def group_required(f):
-		@wraps(f)
-		def wrapper(*args, **kwargs):
-			config = current_app.config['ACCESS_CONFIG']
-			if group_validation(config, request):
-				return f(*args, **kwargs)
-			return render_template('permission.html')
-		return wrapper
+def external_validation(config):
+    endpoint_app = request.endpoint.split('.')[0]
+    user_id = session.get('user_id', None)
+    user_group = session.get('user_group', None)
+    if user_id and user_group is None:
+        if endpoint_app in config['external']:
+            return True
+    return False
+
+
+def external_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        config = current_app.config['access_config']
+        if external_validation(config):
+            return f(*args, **kwargs)
+        return render_template('exceptions/external_only.html')
+    return wrapper
