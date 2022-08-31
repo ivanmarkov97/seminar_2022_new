@@ -23,12 +23,10 @@ provider = SQLProvider(os.path.join(os.path.dirname(__file__), 'sql'))
 @blueprint_market.route('/', methods=['GET', 'POST'])
 def market_index():
 	db_config = current_app.config['db_config']
-	cache_config = current_app.config['cache_config']
-	cached_func = fetch_from_cache('all_items_cached', cache_config)(select)
 
 	if request.method == 'GET':
 		sql = provider.get('all_items.sql')
-		items = cached_func(db_config, sql)
+		items = select(db_config, sql)
 
 		basket_items = session.get('basket', {})
 		return render_template('market/index.html', items=items, basket_items=basket_items)
