@@ -5,10 +5,7 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-md-2" id="filters">
-            {{ components.render_filter() }}
-        </div>
-        <div class="col-md-8" style="background-color: #c9c9c9">
+        <div class="col-md-7">
             <center>
             {% if not items %}
                 <h1>Нет товаров по вашим требованиям</h1>
@@ -17,20 +14,21 @@
             {% endif %}
             </center>
         </div>
-        <div class="col-md-2">
-            <p>Ваша корзина: </p>
-            <div>
-                <a href="#">К оплате</a>
-            </div>
-            <div>
-                <a href="{{ url_for('blueprint_market.clear_basket') }}">Очистить корзину</a>
-            </div>
-            <div>
+        <div class="col-md-3">
+            <center>
                 {% if basket_items %}
                     {{ components.render_basket(items=basket_items) }}
                 {% else %}
                     <p>Ваша корзина пуста</p>
                 {% endif %}
+            </center>
+        </div>
+        <div class="col-md-2">
+            <div>
+                <a href="#">К оплате</a>
+            </div>
+            <div>
+                <a href="{{ url_for('blueprint_market.clear_basket') }}">Очистить корзину</a>
             </div>
         </div>
     </div>
