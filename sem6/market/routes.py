@@ -1,5 +1,4 @@
 import os
-import time
 
 from flask import (
 	Blueprint, render_template,
@@ -21,40 +20,39 @@ blueprint_market = Blueprint(
 provider = SQLProvider(os.path.join(os.path.dirname(__file__), 'sql'))
 
 
-def render_current_basket(request, db_config):
-	category = request.args.get('category', 'all')
-	if category != 'all':
-		sql = provider.get('items_from_category.sql', category=category)
-	else:
-		sql = provider.get('all_items.sql')
-	time.sleep(5)
-	items = select(db_config, sql)
-	basket_items = session.get('basket', [])
-	return render_template('market/index.html', items=items, basket_items=basket_items)
-
-
 @blueprint_market.route('/', methods=['GET', 'POST'])
 def market_index():
 	db_config = current_app.config['db_config']
+	cache_config = current_app.config['cache_config']
+	cached_func = fetch_from_cache('all_items_cached', cache_config)(select)
 
 	if request.method == 'GET':
-		cache_func = fetch_from_cache('market_index', current_app.config['cache_config'])(render_current_basket)
-		return cache_func(request, db_config)
+		sql = provider.get('all_items.sql')
+		items = cached_func(db_config, sql)
+
+		basket_items = session.get('basket', {})
+		return render_template('market/index.html', items=items, basket_items=basket_items)
 	else:
 		item_id = request.form['item_id']
-		sql = provider.get('item_description.sql', item_id=item_id)
-		item_description = select(db_config, sql)
+		sql = provider.get('all_items.sql')
+		items = cached_func(db_config, sql)
+
+		item_description = [item for item in items if str(item['item_id']) == str(item_id)]
 
 		if not item_description:
 			return render_template('market/item_missing.html')
 
 		item_description = item_description[0]
-		curr_basket = session.get('basket', [])
-		curr_basket.append({
-			'name': item_description['name'],
-			'price': item_description['price'],
-			'cnt': 1
-		})
+		curr_basket = session.get('basket', {})
+
+		if item_id in curr_basket:
+			curr_basket[item_id]['cnt'] = curr_basket[item_id]['cnt'] + 1
+		else:
+			curr_basket[item_id] = {
+				'name': item_description['name'],
+				'price': item_description['price'],
+				'cnt': 1
+			}
 		session['basket'] = curr_basket
 		session.permanent = True
 
