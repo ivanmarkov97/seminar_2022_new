@@ -30,11 +30,12 @@ def market_index():
 		basket_items = session.get('basket', {})
 		return render_template('market/index.html', items=items, basket_items=basket_items)
 	else:
-		item_id = request.form['item_id']
+		prod_id = request.form['prod_id']
 		sql = provider.get('all_items.sql')
 		items = select(db_config, sql)
+		print(prod_id, items)
 
-		item_description = [item for item in items if str(item['_id']) == str(item_id)]
+		item_description = [item for item in items if str(item['prod_id']) == str(prod_id)]
 
 		if not item_description:
 			return render_template('market/item_missing.html')
@@ -42,10 +43,10 @@ def market_index():
 		item_description = item_description[0]
 		curr_basket = session.get('basket', {})
 
-		if item_id in curr_basket:
-			curr_basket[item_id]['cnt'] = curr_basket[item_id]['cnt'] + 1
+		if prod_id in curr_basket:
+			curr_basket[prod_id]['cnt'] = curr_basket[prod_id]['cnt'] + 1
 		else:
-			curr_basket[item_id] = {
+			curr_basket[prod_id] = {
 				'name': item_description['name'],
 				'price': item_description['price'],
 				'cnt': 1
