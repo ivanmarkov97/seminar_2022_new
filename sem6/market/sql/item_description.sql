@@ -1,7 +1,7 @@
 select
-    item_id,
-    name,
-    price
-from market_items
+    prod_id,
+    prod_name,
+    prod_price
+from product
 where 1
-    and item_id='$item_id'
+    and prod_id='$prod_id'

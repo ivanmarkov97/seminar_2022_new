@@ -22,10 +22,10 @@
     {% for item in items %}
     <div class="item">
         <div>
-            <div>{{ item["name"] }}</div>
-            <div>{{ item["price"] }}</div>
+            <div>{{ item["prod_name"] }}</div>
+            <div>{{ item["prod_price"] }}</div>
             <form action="" method="post">
-                <input type="hidden" name="item_id" value="{{ item['item_id'] }}">
+                <input type="hidden" name="item_id" value="{{ item['prod_id'] }}">
                 <input type="submit" value="Купить">
             </form>
         </div>
@@ -40,8 +40,8 @@
     {% for _, item_data in items.items() %}
     <div class="basket-item">
         <div>
-            <div><span>Нзавание: </span>{{ item_data["name"] }}</div>
-            <div><span>цена: </span>{{ item_data["price"] }}</div>
+            <div><span>Нзавание: </span>{{ item_data["prod_name"] }}</div>
+            <div><span>цена: </span>{{ item_data["prod_price"] }}</div>
             <div><span>штук: </span>{{ item_data["cnt"] }}</div>
         </div>
     </div>
