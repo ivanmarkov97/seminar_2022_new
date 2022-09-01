@@ -33,7 +33,6 @@ def market_index():
 		prod_id = request.form['prod_id']
 		sql = provider.get('all_items.sql')
 		items = select(db_config, sql)
-		print(prod_id, items)
 
 		item_description = [item for item in items if str(item['prod_id']) == str(prod_id)]
 
