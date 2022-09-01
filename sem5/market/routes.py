@@ -8,7 +8,6 @@ from flask import (
 
 from database.operations import select
 from database.sql_provider import SQLProvider
-from cache.wrapper import fetch_from_cache
 
 
 blueprint_market = Blueprint(
@@ -33,9 +32,9 @@ def market_index():
 	else:
 		item_id = request.form['item_id']
 		sql = provider.get('all_items.sql')
-		items = cached_func(db_config, sql)
+		items = select(db_config, sql)
 
-		item_description = [item for item in items if str(item['item_id']) == str(item_id)]
+		item_description = [item for item in items if str(item['_id']) == str(item_id)]
 
 		if not item_description:
 			return render_template('market/item_missing.html')
