@@ -49,8 +49,8 @@ def market_index():
 			curr_basket[item_id]['cnt'] = curr_basket[item_id]['cnt'] + 1
 		else:
 			curr_basket[item_id] = {
-				'name': item_description['prod_name'],
-				'price': item_description['prod_price'],
+				'name': item_description['name'],
+				'price': item_description['price'],
 				'cnt': 1
 			}
 		session['basket'] = curr_basket
