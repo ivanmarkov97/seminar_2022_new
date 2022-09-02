@@ -1,6 +1,6 @@
 select
-    item_id,
-    name,
-    price
-from market_items
-order by name;
+    prod_id,
+    prod_name as name,
+    prod_price as price
+from product
+order by prod_name;
