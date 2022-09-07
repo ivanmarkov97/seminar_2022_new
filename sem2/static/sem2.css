@@ -1,18 +1,35 @@
- h1 {        font-size  : 16pt;
-             color      : black;
-             font-weight : bold
-            }
- label {     font-size  : 14pt;
-                color      : red
-            }
-  td {      font-family : 'Verdana';
-            font-size   : 12pt;
-            color       : blue;
-            }
+h1 {
+    font-size: 18pt;
+    color: black;
+    font-weight: bold;
+}
 
-  td.border{
-            font-family : 'Verdana';
-            font-weight : bold;
-            font-size   : 12pt;
-            color       : black;
-            }
+label {
+    font-size: 14pt;
+    color: blue;
+}
+
+input {
+    margin: 2pt;
+}
+
+table {
+    border: 1px solid;
+    width: 60%;
+}
+
+td {
+    font-family: 'Verdana';
+    font-size: 10pt;
+    color: blue;
+    text-align: center;
+    border: 1pt solid;
+    border-color: black;
+}
+
+.table-title {
+    font-family: 'Verdana';
+    font-weight: bold;
+    font-size: 12pt;
+    color: black;
+}

@@ -4,7 +4,12 @@ from db_work import work_with_db
 
 app = Flask(__name__)
 
-dbconfig = {'host': '127.0.0.1', 'user': 'root', 'password': 'root', 'database': 'supermarket'}
+db_config = {
+    'host': '127.0.0.1',
+    'user': 'root',
+    'password': 'root',
+    'database': 'joom'
+}
 
 
 @app.route('/')
@@ -16,42 +21,47 @@ def index(param=None):
         return f"Hello {param}"
 
 
-@app.route('/reference')
-def reference_redirect():
-    return render_template('reference_redirect.html')
+@app.route('/menu')
+def render_menu():
+    return render_template('menu.html')
 
 
 @app.route('/page1')
 def page1():
-    return "Я - страница 1"
+    return "Page 1"
 
 
 @app.route('/page2')
 def page2():
-    return "Я - страница 2"
+    return "Page 2"
 
 
 @app.route('/exit')
 def exit_is():
-    return "До свиданья, заходите к нам еще!"
+    return "Goodbye!"
 
 
-@app.route('/find_product', methods=['GET','POST'])
+@app.route('/product', methods=['GET', 'POST'])
 def find_product():
     if request.method == 'GET':
         return render_template('product_form.html')
     else:
         input_product = request.form.get('product_name')
         if input_product:
-            print(input_product)
-            _sql = f""" select p_id, prod_name,prod_measure,prod_price
-                    from product where prod_name ='{input_product}'"""
-            prod_result, schema = work_with_db(dbconfig, _sql)
+            sql = f"""
+                select 
+                    prod_id, 
+                    prod_name,
+                    prod_price
+                from product 
+                where 1=1
+                    and prod_name ='{input_product}'
+            """
+            prod_result, schema = work_with_db(db_config, sql)
             return render_template('db_result.html', schema=schema, result=prod_result)
         else:
-            return "Повторите ввод"
+            return "Try again"
 
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5001, debug=True)
-
