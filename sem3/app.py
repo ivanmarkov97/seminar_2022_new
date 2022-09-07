@@ -7,7 +7,7 @@ from query.routes import blueprint_query
 app = Flask(__name__)
 
 app.register_blueprint(blueprint_query, url_prefix='/requests')
-app.config['db_config'] = json.load(open('config/db.json'))
+app.config['db_config'] = json.load(open('configs/db.json'))
 
 
 @app.route('/', methods=['GET', 'POST'])
