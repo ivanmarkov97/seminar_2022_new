@@ -33,3 +33,9 @@ td {
     font-size: 12pt;
     color: black;
 }
+
+#nav {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
