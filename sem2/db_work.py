@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from db_connection import DBConnection
+from db_context_manager import DBContextManager
 
 
 def work_with_db(db_config: dict, sql: str) -> Tuple[Tuple, List[str]]:
@@ -14,7 +14,7 @@ def work_with_db(db_config: dict, sql: str) -> Tuple[Tuple, List[str]]:
     """
     result = tuple()
     schema = []
-    with DBConnection(db_config) as cursor:
+    with DBContextManager(db_config) as cursor:
         if cursor is None:
             raise ValueError('Cursor not found')
         cursor.execute(sql)

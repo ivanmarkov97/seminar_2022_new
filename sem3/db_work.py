@@ -1,8 +1,8 @@
-from DBcm import UseDatabase
+from db_context_manager import DBContextManager
 
 
 def work_with_db(dbconfig: dict, _sql: str):
-    with UseDatabase(dbconfig) as cursor:
+    with DBContextManager(dbconfig) as cursor:
 
         if cursor is None:
             raise ValueError('Курсор не создан')

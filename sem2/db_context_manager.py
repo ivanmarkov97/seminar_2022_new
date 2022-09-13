@@ -6,7 +6,7 @@ from pymysql.connections import Connection
 from pymysql.err import OperationalError
 
 
-class DBConnection:
+class DBContextManager:
     """Класс для подключения к БД и выполнения sql-запросов."""
 
     def __init__(self, config: dict):
