@@ -1,12 +1,15 @@
 from flask import Flask, url_for, request, render_template, redirect, json
-from blueprint_query.blueprint_query import blueprint_query
+from blueprint_query.route import blueprint_query
+from blueprint_report.route import blueprint_report
 
 app = Flask(__name__)
 
-
 app.register_blueprint(blueprint_query, url_prefix='/zaproses')
+app.register_blueprint(blueprint_report, url_prefix='/reports')
 
-app.config['dbconfig'] = {'host': '127.0.0.1', 'user': 'root', 'password': 'root', 'database': 'supermarket'}
+with open('data_files/dbconfig.json', 'r') as f:
+    db_config = json.load(f)
+app.config['dbconfig'] = db_config
 
 
 @app.route('/', methods=['GET', 'POST'])

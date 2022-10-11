@@ -7,12 +7,13 @@ from flask import (
     session, redirect, url_for
 )
 
-from database.operations import select
-from database.sql_provider import SQLProvider
+from db_work import select_dict
+from sql_provider import SQLProvider
 
 
 blueprint_auth = Blueprint('blueprint_auth', __name__, template_folder='templates')
 provider = SQLProvider(os.path.join(os.path.dirname(__file__), 'sql'))
+print('provider=', provider)
 
 
 @blueprint_auth.route('/', methods=['GET', 'POST'])
@@ -24,7 +25,6 @@ def start_auth():
         password = request.form.get('password')
         if login:
             user_info = define_user(login, password)
-            print(user_info)
             if user_info:
                 user_dict = user_info[0]
                 session['user_id'] = user_dict['user_id']
@@ -43,7 +43,8 @@ def define_user(login: str, password: str) -> Optional[Dict]:
     user_info = None
 
     for sql_search in [sql_internal, sql_external]:
-        _user_info = select(current_app.config['db_config'], sql_search)
+        _user_info = select_dict(current_app.config['db_config'], sql_search)
+        print('_user_info=', _user_info)
         if _user_info:
             user_info = _user_info
             del _user_info

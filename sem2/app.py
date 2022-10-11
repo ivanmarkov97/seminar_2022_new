@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from db_work import work_with_db
+from db_work import select
 
 
 app = Flask(__name__)
@@ -54,10 +54,9 @@ def find_product():
                     prod_name,
                     prod_price
                 from product 
-                where 1=1
-                    and prod_name ='{input_product}'
+                where  prod_name ='{input_product}'
             """
-            prod_result, schema = work_with_db(db_config, sql)
+            prod_result, schema = select(db_config, sql)
             return render_template('db_result.html', schema=schema, result=prod_result)
         else:
             return "Try again"

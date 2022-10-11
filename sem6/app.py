@@ -23,6 +23,7 @@ app.config['cache_config'] = json.load(open('configs/cache.json'))
 @app.route('/')
 @login_required
 def menu_choice():
+    print("I am i menu_choice")
     if session.get('user_group', None):
         return render_template('internal_user_menu.html')
     return render_template('external_user_menu.html')

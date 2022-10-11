@@ -43,12 +43,12 @@ def market_index():
 		curr_basket = session.get('basket', {})
 
 		if prod_id in curr_basket:
-			curr_basket[prod_id]['cnt'] = curr_basket[prod_id]['cnt'] + 1
+			curr_basket[prod_id]['amount'] = curr_basket[prod_id]['amount'] + 1
 		else:
 			curr_basket[prod_id] = {
 				'name': item_description['name'],
 				'price': item_description['price'],
-				'cnt': 1
+				'amount': 1
 			}
 		session['basket'] = curr_basket
 		session.permanent = True

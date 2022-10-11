@@ -2,7 +2,7 @@ from typing import Tuple, List
 from db_context_manager import DBContextManager
 
 
-def work_with_db(db_config: dict, sql: str) -> Tuple[Tuple, List[str]]:
+def select(db_config: dict, sql: str) -> Tuple[Tuple, List[str]]:
     """
     Выполняет запрос (SELECT) к БД с указанным конфигом и запросом.
 
@@ -18,6 +18,7 @@ def work_with_db(db_config: dict, sql: str) -> Tuple[Tuple, List[str]]:
         if cursor is None:
             raise ValueError('Cursor not found')
         cursor.execute(sql)
+        print(cursor.description)
         schema = [column[0] for column in cursor.description]
         result = cursor.fetchall()
     return result, schema
