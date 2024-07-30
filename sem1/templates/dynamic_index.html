@@ -3,25 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Описание продуктов</title>
-    <link type="text/css" rel = "stylesheet" href="{{ url_for('static', filename='sem1.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='sem1.css')}}">
 </head>
 <body>
    <h1 align="center"> {{product_title}} </h1>
-
-    <table border = 1 width = 80%>
-      <tr>
-         <td  class = border align = center> Название </td>
-         <td  class = border align = center> Единица </td>
-         <td  class = border align = center> Цена </td>
-      </tr>
-     {%for product in products%}
-     <tr>
-        <td align=center>{{product['name']}}</td>
-        <td align=center> {{product['measure']}}</td>
-        <td align = center> {{product['price']}}</td>
-     </tr>
-      {% endfor %}
+    <table border="1" width="80%">
+        <tr>
+            <td class="border" align="center"> Название </td>
+            <td class="border" align="center"> Единица </td>
+            <td class="border" align="center"> Цена </td>
+        </tr>
+        {%for product in products%}
+        <tr>
+            <td align="center">{{product['name']}}</td>
+            <td align="center"> {{product['measure']}}</td>
+            <td align="center"> {{product['price']}}</td>
+        </tr>
+        {% endfor %}
     </table>
-
 </body>
 </html>
