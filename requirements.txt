@@ -1,0 +1,6 @@
+flask
+pymysql
+requests
+cryptography
+mypy
+loguru
