@@ -1,7 +1,7 @@
 from flask import Flask, render_template, json
 
-from blueprint_query.route import blueprint_query
-from blueprint_report.route import blueprint_report
+from query.route import blueprint_query
+from report.route import blueprint_report
 
 
 app: Flask = Flask(__name__)
