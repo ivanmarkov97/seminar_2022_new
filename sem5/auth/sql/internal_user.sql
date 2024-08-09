@@ -1,1 +1,7 @@
-select user_id, group_name as user_group from user where login ="$login" and password ="$password"
+SELECT
+    user_id,
+    user_group
+FROM internal_user
+WHERE 1=1
+    AND login ="$login"
+    AND password ="$password"
