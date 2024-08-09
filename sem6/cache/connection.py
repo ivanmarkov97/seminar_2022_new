@@ -1,5 +1,5 @@
 import json
-from typing import Any, Optional, Dict
+from typing import Any, Dict
 
 import redis
 
@@ -7,11 +7,11 @@ import redis
 class RedisCache:
 
 	def __init__(self, config: dict):
-		self.config = config
-		self.conn = self._connect()
+		self.config: dict = config
+		self.conn: redis.Redis = self._connect()
 
 	def _connect(self) -> redis.Redis:
-		conn = redis.Redis(**self.config)
+		conn: redis.Redis = redis.Redis(**self.config)
 		return conn
 
 	def _update_connect_if_need(self) -> None:
@@ -31,9 +31,9 @@ class RedisCache:
 			print(f"error while setting key-value: {str(e)}")
 			return False
 
-	def get_value(self, name: str) -> Optional[Any]:
+	def get_value(self, name: str) -> Any:
 		self._update_connect_if_need()
-		value = self.conn.get(name)
+		value: str = self.conn.get(name)
 		if value:
 			return json.loads(value)
 		return None

@@ -1,49 +1,49 @@
 import os
+from typing import Callable, TYPE_CHECKING
 
-from flask import (
-	Blueprint, render_template,
-	request, current_app,
-	session, redirect, url_for
-)
+from flask import Blueprint, render_template, request, current_app, session, redirect, url_for
 
 from database.operations import select
 from database.sql_provider import SQLProvider
 from cache.wrapper import fetch_from_cache
 
+if TYPE_CHECKING:
+	from werkzeug.wrappers.response import Response
 
-blueprint_market = Blueprint(
+
+blueprint_market: Blueprint = Blueprint(
 	'blueprint_market',
 	__name__,
 	template_folder='templates',
 	static_folder='static'
 )
-provider = SQLProvider(os.path.join(os.path.dirname(__file__), 'sql'))
+provider: SQLProvider = SQLProvider(os.path.join(os.path.dirname(__file__), 'sql'))
 
 
 @blueprint_market.route('/', methods=['GET', 'POST'])
-def market_index():
-	db_config = current_app.config['db_config']
-	cache_config = current_app.config['cache_config']
-	cached_func = fetch_from_cache('all_items_cached', cache_config)(select)
+def market_index() -> str | Response:
+	db_config: dict = current_app.config['db_config']
+	cache_config: dict = current_app.config['cache_config']
+	cached_func: Callable = fetch_from_cache('all_items_cached', cache_config)(select)
 
 	if request.method == 'GET':
-		sql = provider.get('all_items.sql')
-		items = cached_func(db_config, sql)
+		sql: str = provider.get('all_items.sql')
+		items: list[dict] = cached_func(db_config, sql)
 
-		basket_items = session.get('basket', {})
+		basket_items: dict = session.get('basket', {})
 		return render_template('market/index.html', items=items, basket_items=basket_items)
 	else:
-		prod_id = request.form['prod_id']
-		sql = provider.get('all_items.sql')
-		items = cached_func(db_config, sql)
+		prod_id: str = request.form['prod_id']
+		sql: str = provider.get('all_items.sql')
+		items: list[dict] = cached_func(db_config, sql)
 
-		item_description = [item for item in items if str(item['prod_id']) == str(prod_id)]
+		item_descriptions: list[dict] = [item for item in items if str(item['prod_id']) == str(prod_id)]
 
-		if not item_description:
+		if not item_descriptions:
 			return render_template('market/item_missing.html')
 
-		item_description = item_description[0]
-		curr_basket = session.get('basket', {})
+		item_description: dict = item_descriptions[0]
+		curr_basket: dict = session.get('basket', {})
 
 		if prod_id in curr_basket:
 			curr_basket[prod_id]['cnt'] = curr_basket[prod_id]['cnt'] + 1
@@ -60,7 +60,7 @@ def market_index():
 
 
 @blueprint_market.route('/clear-basket')
-def clear_basket():
+def clear_basket() -> Response:
 	if 'basket' in session:
 		session.pop('basket')
 	return redirect(url_for('blueprint_market.market_index'))

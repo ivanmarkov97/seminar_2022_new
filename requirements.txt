@@ -4,3 +4,4 @@ requests
 cryptography
 mypy
 loguru
+redis
