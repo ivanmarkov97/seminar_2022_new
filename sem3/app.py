@@ -1,24 +1,25 @@
-from flask import Flask, url_for, request, render_template, redirect, json
+from flask import Flask, render_template, json
+
 from blueprint_query.route import blueprint_query
 from blueprint_report.route import blueprint_report
 
-app = Flask(__name__)
 
-app.register_blueprint(blueprint_query, url_prefix='/zaproses')
+app: Flask = Flask(__name__)
+
+app.register_blueprint(blueprint_query, url_prefix='/requests')
 app.register_blueprint(blueprint_report, url_prefix='/reports')
 
-with open('data_files/dbconfig.json', 'r') as f:
-    db_config = json.load(f)
-app.config['dbconfig'] = db_config
+app.config['dbconfig'] = json.load(open('data_files/dbconfig.json'))
 
 
 @app.route('/', methods=['GET', 'POST'])
-def query():
+def query() -> str:
     return render_template('start_request.html')
 
+
 @app.route('/exit')
-def goodbye():
-    return 'До свиданья, заходите к нам еще!'
+def goodbye() -> str:
+    return 'До свидания, заходите к нам еще!'
 
 
 if __name__ == '__main__':
