@@ -5,7 +5,7 @@ from typing import Callable, TYPE_CHECKING
 
 from flask import Blueprint, render_template, request, current_app, session, redirect, url_for
 
-from database.operations import select
+from database.db_work import select_dict
 from database.sql_provider import SQLProvider
 from cache.wrapper import fetch_from_cache
 
@@ -26,7 +26,7 @@ provider: SQLProvider = SQLProvider(os.path.join(os.path.dirname(__file__), 'sql
 def market_index() -> str | Response:
 	db_config: dict = current_app.config['db_config']
 	cache_config: dict = current_app.config['cache_config']
-	cached_func: Callable = fetch_from_cache('all_items_cached', cache_config)(select)
+	cached_func: Callable = fetch_from_cache('all_items_cached', cache_config)(select_dict)
 
 	if request.method == 'GET':
 		sql: str = provider.get('all_items.sql')
