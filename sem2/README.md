@@ -9,8 +9,8 @@
 - Среда разработки [PyCharm](https://www.jetbrains.com/pycharm/download) или [VSCode](https://code.visualstudio.com/) (PyCharm предпочтительнее)
 - [Python3](https://www.python.org/downloads/)
 - Браузер
-- Код из семинара №1
-- установленные библиотеки `pymysql` и `cryptography`
+- Рабочий код из семинара №1
+- Установленные библиотеки `pymysql` и `cryptography`
 
 Структура семинара:
 ```
