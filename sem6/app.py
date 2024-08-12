@@ -25,9 +25,8 @@ app.config['access_config'] = json.load(open('configs/access.json'))
 @app.route('/')
 @login_required
 def menu_choice() -> str:
-    if session.get('user_group', None):
-        return render_template('internal_user_menu.html')
-    return render_template('external_user_menu.html')
+    return render_template(
+        'external_user_menu_kek_lol.html' if session.get('user_group') else 'internal_user_menu_kek_lol.html')
 
 
 @app.route('/exit')
