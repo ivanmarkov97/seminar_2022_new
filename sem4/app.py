@@ -4,6 +4,7 @@ from flask import Flask, render_template, session
 
 from auth.routes import blueprint_auth
 from report.routes import blueprint_report
+from query.route import blueprint_query
 from access import login_required
 
 
@@ -11,6 +12,7 @@ app: Flask = Flask(__name__)
 app.secret_key = 'SuperKey'
 
 app.register_blueprint(blueprint_auth, url_prefix='/auth')
+app.register_blueprint(blueprint_query, url_prefix='/query')
 app.register_blueprint(blueprint_report, url_prefix='/report')
 
 app.config['db_config'] = json.load(open('configs/db.json'))
