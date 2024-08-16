@@ -7,28 +7,28 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def hello() -> str:
+def hello():
     return "Hello world"
 
 
 @app.route('/static')
-def static_index() -> str:
+def static_index():
     return render_template('static_index.html')
 
 
 @app.route('/dynamic')
-def dynamic_index() -> str:
-    products: List[Dict[str, Union[str, int]]] = [
-        {'name': 'телятина', 'measure': 'килограмм', 'price': 800},
-        {'name': 'говядина', 'measure': 'килограмм', 'price': 710},
-        {'name': 'свинина', 'measure': 'килограмм', 'price': 670},
+def dynamic_index():
+    products = [
+        {'name': 'телятина', 'measure': '100 кг', 'price': 800},
+        {'name': 'говядина', 'measure': '30 кг', 'price': 710},
+        {'name': 'свинина', 'measure': '20 кг', 'price': 670},
     ]
     product_title = 'Вот все наши мясные продукты'
     return render_template('dynamic_index.html', product_title=product_title, products=products)
 
 
 @app.route('/test')
-def test_index() -> str:
+def test_index():
     return "Changes are done"
 
 
