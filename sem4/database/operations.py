@@ -1,9 +1,7 @@
-from typing import Tuple, List
-
-from sem3.database.db_context_manager import DBContextManager
+from database.connection import DBContextManager
 
 
-def select(db_config: dict, sql: str) -> Tuple[Tuple, List[str]]:
+def select(db_config, sql):
     """
     Выполняет запрос (SELECT) к БД с указанным конфигом и запросом.
 
@@ -13,8 +11,6 @@ def select(db_config: dict, sql: str) -> Tuple[Tuple, List[str]]:
     Return:
         Кортеж с результатом запроса и описанеим колонок запроса.
     """
-    result: tuple = tuple()
-    schema: list[str] = []
 
     with DBContextManager(db_config) as cursor:
         if cursor is None:
@@ -24,10 +20,10 @@ def select(db_config: dict, sql: str) -> Tuple[Tuple, List[str]]:
         schema = [column[0] for column in cursor.description]
         result = cursor.fetchall()
 
-    return result, schema
+        return result, schema
 
 
-def select_dict(db_config: dict, sql: str) -> list[dict]:
+def select_dict(db_config, sql):
     """
     Выполняет запрос (SELECT) к БД с указанным конфигом и запросом.
 
@@ -38,22 +34,11 @@ def select_dict(db_config: dict, sql: str) -> list[dict]:
         Список словарей, где словарь это строка результата sql-запроса.
     """
 
-    with DBContextManager(db_config) as cursor:
-
-        if cursor is None:
-            raise ValueError('Cursor not found')
-
-        cursor.execute(sql)
-        result: list[dict] = []
-        schema: list[str] = [column[0] for column in cursor.description]
-
-        for row in cursor.fetchall():
-            result.append(dict(zip(schema, row)))
-
-        return result
+    rows, schema = select(db_config, sql)
+    return [dict(zip(schema, row)) for row in rows]
 
 
-def call_proc(db_config: dict, proc_name: str, *args) -> tuple:
+def call_proc(db_config, proc_name, *args):
     """
     Вызываем хранимую процедуру в БД.
 
@@ -67,5 +52,5 @@ def call_proc(db_config: dict, proc_name: str, *args) -> tuple:
     with DBContextManager(db_config) as cursor:
         if cursor is None:
             raise ValueError('Cursor not found')
-        res: tuple = cursor.callproc(proc_name, args)
+        res = cursor.callproc(proc_name, args)
         return res

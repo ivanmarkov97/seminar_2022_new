@@ -5,4 +5,4 @@ SELECT
     prod_price
 FROM product
 WHERE 1=1
-    AND prod_name='$input_product'
+    AND prod_name LIKE '%$input_product%'
