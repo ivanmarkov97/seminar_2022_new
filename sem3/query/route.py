@@ -18,7 +18,7 @@ def queries():
         input_product = request.form.get('product_name')
         if input_product:
             sql = provider.get('product.sql', dict(input_product=input_product))
-            product_result, schema = select(current_app.config['dbconfig'], sql)
+            product_result, schema = select(current_app.config['db_config'], sql)
             return render_template('db_result.html', schema=schema, result=product_result)
         else:
             return "Repeat input"

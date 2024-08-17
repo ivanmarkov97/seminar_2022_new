@@ -95,6 +95,14 @@ def insert_data(cursor: Cursor, db_name: str) -> None:
         {'prod_name': 'джинсы', 'prod_price': 2000, 'prod_measure': 20},
         {'prod_name': 'куртка', 'prod_price': 5000, 'prod_measure': 5},
         {'prod_name': 'рюкзак', 'prod_price': 1500, 'prod_measure': 10},
+        {'prod_name': 'майка', 'prod_price': 500, 'prod_measure': 12},
+        {'prod_name': 'футболка', 'prod_price': 1500, 'prod_measure': 3},
+
+        {'prod_name': 'банан', 'prod_price': 300, 'prod_measure': 30},
+        {'prod_name': 'апельсин', 'prod_price': 350, 'prod_measure': 40},
+        {'prod_name': 'мясо', 'prod_price': 1000, 'prod_measure': 45},
+        {'prod_name': 'творог', 'prod_price': 400, 'prod_measure': 20},
+        {'prod_name': 'вода', 'prod_price': 100, 'prod_measure': 21},
     ]
 
     sql: str = f"""
@@ -155,7 +163,7 @@ def insert_data(cursor: Cursor, db_name: str) -> None:
 if __name__ == '__main__':
     create_database({
         'host': '127.0.0.1',
-        'port': 3306,
+        'port': 3307,
         'user': 'root',
         'password': 'root'
     })

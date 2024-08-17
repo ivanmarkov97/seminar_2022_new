@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.register_blueprint(blueprint_query, url_prefix='/query')
 app.register_blueprint(blueprint_report, url_prefix='/report')
 
-app.config['dbconfig'] = json.load(open('configs/dbconfig.json'))
+app.config['db_config'] = json.load(open('configs/dbconfig.json'))
 
 
 @app.route('/', methods=['GET', 'POST'])

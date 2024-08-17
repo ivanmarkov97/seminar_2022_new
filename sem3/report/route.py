@@ -11,7 +11,7 @@ def start_report() -> str:
     rep_month: int = 9
     rep_year: int = 2022
     if_exists: int = 0
-    res = call_proc(current_app.config['dbconfig'], 'product_report', rep_month, rep_year, if_exists)
+    res = call_proc(current_app.config['db_config'], 'product_report', rep_month, rep_year, if_exists)
     if res:
         return str(res)
     return 'Не удалось вызвать процедуру'
