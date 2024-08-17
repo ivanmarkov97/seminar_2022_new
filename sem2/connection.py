@@ -1,33 +1,23 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
-
 from loguru import logger
 from pymysql import connect
 from pymysql.err import OperationalError
 
 
-if TYPE_CHECKING:
-    from types import TracebackType
-
-    from pymysql.cursors import Cursor
-    from pymysql.connections import Connection
-
-
 class DBContextManager:
     """Класс для подключения к БД и выполнения sql-запросов."""
 
-    def __init__(self, config: dict) -> None:
+    def __init__(self, config):
         """
         Инициализация объекта подключения.
 
         Args:
              config: dict - Конфиг дял подключения к БД.
         """
-        self.config: dict = config
-        self.conn: Connection | None = None
-        self.cursor: Cursor | None = None
+        self.config = config
+        self.conn = None
+        self.cursor = None
 
-    def __enter__(self) -> Cursor | None:
+    def __enter__(self):
         """
         Реализует логику входа в контекстный менеджер.
         Создает соединение к БД и возвращает курсор для выполнения запросов.
@@ -49,12 +39,7 @@ class DBContextManager:
                 logger.error(str(err))
             return None
 
-    def __exit__(
-            self,
-            exc_type: type | None,
-            exc_val: ValueError | None,
-            exc_tr: TracebackType | None
-    ) -> bool:
+    def __exit__(self, exc_type, exc_val, exc_tr):
         """
         Реализует логику выхода из контекстого менеджера для работы с БД.
         Закрывает соединение и курсор.
@@ -65,7 +50,6 @@ class DBContextManager:
             exc_val: Значение возможной ошибки при работе менеджера.
             exc_tr: Traceback (подробный текст ошибки) при работе менеджера.
         """
-        print(type(exc_type), type(exc_val), type(exc_tr))
 
         if self.conn and self.cursor:
             if exc_type:

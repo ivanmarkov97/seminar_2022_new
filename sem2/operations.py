@@ -1,9 +1,7 @@
-from typing import Tuple, List
-
-from db_context_manager import DBContextManager
+from connection import DBContextManager
 
 
-def select(db_config: dict, sql: str) -> Tuple[Tuple, List[str]]:
+def select(db_config, sql):
     """
     Выполняет запрос (SELECT) к БД с указанным конфигом и запросом.
 
@@ -13,8 +11,6 @@ def select(db_config: dict, sql: str) -> Tuple[Tuple, List[str]]:
     Return:
         Кортеж с результатом запроса и описанеим колонок запроса.
     """
-    result: tuple = tuple()
-    schema: list[str] = []
 
     with DBContextManager(db_config) as cursor:
         if cursor is None:
@@ -24,4 +20,4 @@ def select(db_config: dict, sql: str) -> Tuple[Tuple, List[str]]:
         schema = [column[0] for column in cursor.description]
         result = cursor.fetchall()
 
-    return result, schema
+        return result, schema
