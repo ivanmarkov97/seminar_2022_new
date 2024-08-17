@@ -4,21 +4,21 @@ from query.route import blueprint_query
 from report.route import blueprint_report
 
 
-app: Flask = Flask(__name__)
+app = Flask(__name__)
 
-app.register_blueprint(blueprint_query, url_prefix='/requests')
-app.register_blueprint(blueprint_report, url_prefix='/reports')
+app.register_blueprint(blueprint_query, url_prefix='/query')
+app.register_blueprint(blueprint_report, url_prefix='/report')
 
 app.config['dbconfig'] = json.load(open('configs/dbconfig.json'))
 
 
 @app.route('/', methods=['GET', 'POST'])
-def query() -> str:
+def query():
     return render_template('start_request.html')
 
 
 @app.route('/exit')
-def goodbye() -> str:
+def goodbye():
     return 'До свидания, заходите к нам еще!'
 
 
