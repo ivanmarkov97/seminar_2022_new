@@ -7,8 +7,6 @@ from loguru import logger
 class RedisCache:
 
 	def __init__(self, config):
-		import datetime
-		print(f'connecting at {datetime.datetime.now()}')
 		self.config = config
 		self.conn = self._connect()
 

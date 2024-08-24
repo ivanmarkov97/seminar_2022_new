@@ -1,29 +1,39 @@
+import json
+from pathlib import Path
+
 import requests
 from flask import Blueprint, render_template, request, session, redirect, url_for
 
+from cache.wrapper import fetch_from_cache
+
 
 blueprint_market = Blueprint('bp_market', __name__, template_folder='templates', static_folder='static')
+cache_config = json.load(open(Path('.').resolve() / 'configs' / 'cache.json'))
 
 MARKET_SERVICE_URL = 'http://127.0.0.1:5002/api/market'
+
+
+@fetch_from_cache(cache_name='all_items_cache', cache_config=cache_config)
+def cached_all_items_request():
+    import time
+    time.sleep(10)
+    return requests.get(MARKET_SERVICE_URL, timeout=10).json()
 
 
 @blueprint_market.route('/', methods=['GET', 'POST'])
 def market_index():
     if request.method == 'GET':
-        all_products_response = requests.get(MARKET_SERVICE_URL, timeout=10)
-        print(all_products_response.json())
-        if all_products_response.json()['status'] == 200:
+        all_products_response = cached_all_items_request()
+        if all_products_response['status'] == 200:
             basket_items = session.get('basket', {})
             return render_template(
                 'market/index.html',
-                items=all_products_response.json()['items'],
+                items=all_products_response['items'],
                 basket_items=basket_items
             )
     else:
         prod_id = request.form['prod_id']
-        print('prod_id', prod_id)
         product_response = requests.get(f"{MARKET_SERVICE_URL}/{prod_id}", timeout=10)
-        print(product_response.json())
         if product_response.json()['status'] != 200:
             return render_template('market/item_missing.html')
 
