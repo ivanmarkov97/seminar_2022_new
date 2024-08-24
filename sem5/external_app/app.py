@@ -3,8 +3,8 @@ from pathlib import Path
 
 from flask import Flask
 
-from auth.route import blueprint_auth
-from market.route import blueprint_market
+from blueprints.auth.route import blueprint_auth
+from blueprints.market.route import blueprint_market
 
 
 app = Flask(__name__)

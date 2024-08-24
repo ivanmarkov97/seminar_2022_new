@@ -12,6 +12,14 @@ docker run \
   -d \
   mariadb:latest
 
+# run redis cache
+docker run \
+  --rm \
+  --name redis_cache \
+  -p 6379:6379 \
+  -d \
+  redis:latest
+
 # wait for MYSQL is up
 sleep 5
 

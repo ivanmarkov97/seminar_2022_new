@@ -1,21 +1,31 @@
 import os
+import json
+from pathlib import Path
 
 from flask import Blueprint, request, current_app, jsonify
 
 from database.operations import select_dict, DBContextManager
 from database.sql_provider import SQLProvider
-from market.transactions import TransactionProcessor, InvalidOrderDataException
+from .transactions import TransactionProcessor, InvalidOrderDataException
+from cache.wrapper import fetch_from_cache
 
 
 blueprint_market = Blueprint('bp_market', __name__)
 provider = SQLProvider(os.path.join(os.path.dirname(__file__), 'sql'))
+cache_config = json.load(open(Path('.').resolve() / 'configs/cache.json'))
+
+
+@fetch_from_cache(cache_name='all_items_cache', cache_config=cache_config)
+def cached_all_items_select():
+    db_config = current_app.config['db_config']
+    sql = provider.get('all_items.sql', {})
+    items = select_dict(db_config, sql)
+    return items
 
 
 @blueprint_market.route('/', methods=['GET'])
 def market_all_items():
-    db_config = current_app.config['db_config']
-    sql = provider.get('all_items.sql', {})
-    items = select_dict(db_config, sql)
+    items = cached_all_items_select()
     return jsonify({'status': 200, 'items': items})
 
 
