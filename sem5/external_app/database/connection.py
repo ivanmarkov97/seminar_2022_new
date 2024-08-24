@@ -56,7 +56,7 @@ class DBContextManager:
 
         if self.conn and self.cursor:
             if exc_type:
-                logger.error('Invalid DB operation. Rollback')
+                logger.error(f'Invalid DB operation. {str(exc_val)}. Rollback')
                 if self.is_transaction:
                     self.conn.rollback()
             else:

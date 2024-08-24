@@ -22,4 +22,4 @@ source ../.venv/bin/activate
 python ../db_init/create_database.py
 
 # run flask application for internal users
-python app.py
+python external_app/app.py
