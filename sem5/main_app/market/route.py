@@ -1,14 +1,14 @@
 import json
-from pathlib import Path
 
 import requests
 from flask import Blueprint, render_template, request, session, redirect, url_for
 
 from cache.wrapper import fetch_from_cache
+from utils import get_config_dir
 
 
 blueprint_market = Blueprint('bp_market', __name__, template_folder='templates', static_folder='static')
-cache_config = json.load(open(Path('.').resolve() / 'configs' / 'cache.json'))
+cache_config = json.load(open(get_config_dir() / 'cache.json'))
 
 MARKET_SERVICE_URL = 'http://127.0.0.1:5002/api/market'
 

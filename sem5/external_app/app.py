@@ -1,16 +1,15 @@
 import json
-from pathlib import Path
 
 from flask import Flask
 
 from blueprints.auth.route import blueprint_auth
 from blueprints.market.route import blueprint_market
+from utils import get_config_dir
 
 
 app = Flask(__name__)
 
-project_path = Path(__file__).resolve().parent
-app.config['db_config'] = json.load(open(project_path / 'configs/db.json'))
+app.config['db_config'] = json.load(open(get_config_dir() / 'db.json'))
 
 app.register_blueprint(blueprint_auth, url_prefix='/api/auth')
 app.register_blueprint(blueprint_market, url_prefix='/api/market')

@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 
 from flask import Flask, render_template, session
 
@@ -8,6 +7,7 @@ from report.route import blueprint_report
 from query.route import blueprint_query
 from market.route import blueprint_market
 from access import login_required
+from utils import get_config_dir
 
 
 app = Flask(__name__)
@@ -18,9 +18,8 @@ app.register_blueprint(blueprint_query, url_prefix='/query')
 app.register_blueprint(blueprint_report, url_prefix='/report')
 app.register_blueprint(blueprint_market, url_prefix='/market')
 
-project_path = Path(__file__).resolve().parent
-app.config['db_config'] = json.load(open(project_path / 'configs/db.json'))
-app.config['access_config'] = json.load(open(project_path / 'configs/access.json'))
+app.config['db_config'] = json.load(open(get_config_dir() / 'db.json'))
+app.config['access_config'] = json.load(open(get_config_dir() / 'access.json'))
 
 
 @app.route('/')
