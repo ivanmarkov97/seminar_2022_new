@@ -12,6 +12,14 @@ docker run \
   -d \
   mariadb:latest
 
+# run redis cache
+docker run \
+  --rm \
+  --name redis_cache \
+  -p 6379:6379 \
+  -d \
+  redis:latest
+
 # wait for MYSQL is up
 sleep 5
 
@@ -21,8 +29,5 @@ source ../.venv/bin/activate
 # create database
 python ../db_init/create_database.py
 
-# run auth application
-python external_app/app.py &
-
-# run main application
-python main_app/app.py &
+# run flask application for internal users
+python external_app/app.py

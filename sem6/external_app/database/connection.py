@@ -6,7 +6,7 @@ from pymysql.err import OperationalError
 class DBContextManager:
     """Класс для подключения к БД и выполнения sql-запросов."""
 
-    def __init__(self, config):
+    def __init__(self, config, is_transaction=False):
         """
         Инициализация объекта подключения.
 
@@ -16,6 +16,7 @@ class DBContextManager:
         self.config = config
         self.conn = None
         self.cursor = None
+        self.is_transaction = is_transaction
 
     def __enter__(self):
         """
@@ -27,6 +28,8 @@ class DBContextManager:
         """
         try:
             self.conn = connect(**self.config)
+            if self.is_transaction:
+                self.conn.begin()
             self.cursor = self.conn.cursor()
             return self.cursor
 
@@ -53,8 +56,9 @@ class DBContextManager:
 
         if self.conn and self.cursor:
             if exc_type:
-                logger.error('Invalid DB operation. Rollback')
-                self.conn.rollback()
+                logger.error(f'Invalid DB operation. {str(exc_val)}. Rollback')
+                if self.is_transaction:
+                    self.conn.rollback()
             else:
                 self.conn.commit()
             self.conn.close()
