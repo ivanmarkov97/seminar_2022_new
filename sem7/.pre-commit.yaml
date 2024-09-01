@@ -1,0 +1,2 @@
+# mypy --install-types
+# ruff check / ruff check --fix
