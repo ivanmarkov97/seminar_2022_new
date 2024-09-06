@@ -1,0 +1,13 @@
+{
+  "typical": [
+    "bp_report",
+    "bp_query"
+  ],
+  "admin": [
+    "bp_market",
+    "blp_report"
+  ],
+  "external": [
+    "bp_market"
+  ]
+}

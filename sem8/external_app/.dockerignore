@@ -1,0 +1,10 @@
+.git
+.gitignore
+.env/
+.venv/
+__pycache__/
+.mypy_cache/
+*.pyc
+README.md
+Dockerfile*
+db.json

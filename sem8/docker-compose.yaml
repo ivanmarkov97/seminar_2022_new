@@ -1,0 +1,59 @@
+version: '3.4'
+
+services:
+  db:
+    image: 'mariadb:latest'
+    container_name: 'mariadb'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3307:3306'
+    healthcheck:
+      test: ['CMD', 'healthcheck.sh', '--connect', '--innodb_initialized']
+      start_period: '5s'
+      interval: '30s'
+      timeout: '5s'
+      retries: 3
+
+  cache:
+    image: 'redis:latest'
+    container_name: 'redis-cache'
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      start_period: '5s'
+      interval: '10s'
+      timeout: '3s'
+      retries: 3
+
+  external_app:
+    image: 'external_app:v0.1'
+    container_name: 'external_app'
+    build:
+      context: 'external_app'
+    ports:
+      - '8083:8081'
+    volumes:
+      - './external_app/configs/db.json:/app/configs/db.json'
+    depends_on:
+      db:
+        condition: 'service_healthy'
+
+  main_app:
+    image: 'main_app:v0.1'
+    container_name: 'main_app'
+    build:
+      context: 'main_app'
+    ports:
+      - '8082:8080'
+    volumes:
+      - './main_app/configs/db.json:/app/configs/db.json'
+      - './main_app/configs/cache.json:/app/configs/cache.json'
+    depends_on:
+      db:
+        condition: 'service_healthy'
+      cache:
+        condition: 'service_healthy'
+      external_app:
+        condition: 'service_started'
