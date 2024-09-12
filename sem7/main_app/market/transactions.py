@@ -1,7 +1,5 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from database.connection import DBContextManager
 
@@ -63,7 +61,7 @@ class TransactionProcessor:
             SQL-запрос для создания заказа
         """
 
-        user_id: int = data['user_id']
+        user_id: str = data['user_id']
         order_dt: str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         order_total_price: int = 0
@@ -83,7 +81,7 @@ class TransactionProcessor:
             )
         )
 
-    def _create_order_details_sql(self, data, order_id):
+    def _create_order_details_sql(self, data: dict, order_id: str) -> list[str]:
         """
         Создает SQL-запрос для создания деталей заказа в БД.
 
@@ -93,12 +91,12 @@ class TransactionProcessor:
             Список SQL-запросов для создания описания деталей заказа
         """
 
-        sqls = []
+        sqls: list[str] = []
         for order_item in data['basket']:
-            prod_id: int = order_item['item_id']
-            prod_price: float = order_item['price']
-            prod_count: int = order_item['count']
-            sql: str = self.sql_provider.get(
+            prod_id = order_item['item_id']
+            prod_price = order_item['price']
+            prod_count = order_item['count']
+            sql = self.sql_provider.get(
                 'order_detail.sql',
                 dict(
                     order_id=order_id,
@@ -110,7 +108,7 @@ class TransactionProcessor:
             sqls.append(sql)
         return sqls
 
-    def make_transaction(self, data: dict | None) -> int:
+    def make_transaction(self, data: dict) -> str:
         """
         Выполняет транзакцию записи заказа и его описаний в БД.
 
@@ -119,20 +117,20 @@ class TransactionProcessor:
         Returns:
             ID заказа в БД
         """
-        if data is None or not self.validate_order(data):
+        if not self.validate_order(data):
             raise InvalidOrderDataException('Invalid order data')
 
         with DBContextManager(self.db_config, is_transaction=True) as cursor:
             if cursor is None:
                 raise ValueError('Cursor is None')
 
-            order_sql: str = self._create_order_sql(data)
+            order_sql = self._create_order_sql(data)
             cursor.execute(order_sql)
-            order_id: int = cursor.lastrowid
+            order_id = cursor.lastrowid
             # https://stackoverflow.com/questions/17112852/get-the-new-record-primary-key-id-from-mysql-insert-query
 
-            order_details_sqls: list[str] = self._create_order_details_sql(data, order_id)
+            order_details_sqls = self._create_order_details_sql(data, order_id)
             for order_detail_sql in order_details_sqls:
                 cursor.execute(order_detail_sql)
 
-        return order_id
+            return order_id
