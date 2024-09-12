@@ -1,51 +1,55 @@
 from __future__ import annotations
 
+import os
 import json
 from typing import TYPE_CHECKING
 
-import requests
-from flask import Blueprint, render_template, request, session, redirect, url_for
+from flask import Blueprint, render_template, request, session, redirect, url_for, current_app
 
+from database.operations import select_dict
+from database.sql_provider import SQLProvider
 from cache.wrapper import fetch_from_cache
 from utils import get_config_dir
+from .transactions import TransactionProcessor, InvalidOrderDataException
 
 if TYPE_CHECKING:
     from werkzeug.wrappers.response import Response
 
-
-blueprint_market = Blueprint('bp_market', __name__, template_folder='templates', static_folder='static')
-cache_config = json.load(open(get_config_dir() / 'cache.json'))
-
-MARKET_SERVICE_URL = 'http://127.0.0.1:5002/api/market'
+blueprint_market: Blueprint = Blueprint('bp_market', __name__, template_folder='templates', static_folder='static')
+sql_provider: SQLProvider = SQLProvider(os.path.join(os.path.dirname(__file__), 'sql'))
+cache_config: dict = json.load(open(get_config_dir() / 'cache.json'))
 
 
 @fetch_from_cache(cache_name='all_items_cache', cache_config=cache_config)
-def cached_all_items_request() -> dict:
+def cached_all_items_request() -> list[dict]:
     import time
     time.sleep(10)
-    return requests.get(MARKET_SERVICE_URL, timeout=10).json()
+    db_config = current_app.config['db_config']
+    sql = sql_provider.get('all_items.sql', {})
+    items = select_dict(db_config, sql)
+    return items
 
 
 @blueprint_market.route('/', methods=['GET', 'POST'])
 def market_index() -> str | Response:
     if request.method == 'GET':
-        all_products_response: dict = cached_all_items_request()
-        if all_products_response['status'] == 200:
-            basket_items: dict = session.get('basket', {})
-            return render_template(
-                'market/index.html',
-                items=all_products_response['items'],
-                basket_items=basket_items
-            )
-        return 'Не смогли найти товары'
+        items = cached_all_items_request()
+        basket_items = session.get('basket', {})
+        return render_template(
+            'market/index.html',
+            items=items,
+            basket_items=basket_items
+        )
     else:
-        prod_id: str = request.form['prod_id']
-        product_response: requests.Response = requests.get(f"{MARKET_SERVICE_URL}/{prod_id}", timeout=10)
-        if product_response.json()['status'] != 200:
+        db_config = current_app.config['db_config']
+        prod_id = request.form['prod_id']
+        sql = sql_provider.get('item_description.sql', dict(product_id=prod_id))
+        items = select_dict(db_config, sql)
+        if not items:
             return render_template('market/item_missing.html')
 
-        item_description: dict = product_response.json()['items'][0]
-        curr_basket: dict = session.get('basket', {})
+        item_description = items[0]
+        curr_basket = session.get('basket', {})
         if prod_id in curr_basket:
             curr_basket[prod_id]['count'] = curr_basket[prod_id]['count'] + 1
         else:
@@ -64,7 +68,7 @@ def market_transaction() -> str | Response:
     curr_basket: dict = session.get('basket', {})
     if not curr_basket:
         return redirect(url_for('bp_market.market_index'))
-    user_id = session['user_id']
+    user_id: str = session['user_id']
     request_basket: list[dict] = []
     for product in curr_basket:
         request_basket.append({
@@ -73,21 +77,27 @@ def market_transaction() -> str | Response:
             'count': curr_basket[product]['count']
         })
     request_data: dict = {'user_id': user_id, 'basket': request_basket}
-    response: requests.Response = requests.post(f'{MARKET_SERVICE_URL}/order', json=request_data, timeout=10)
-    if response.json()['status'] != 200:
-        return response.json()['message']
+
+    try:
+        order_id: str | None = TransactionProcessor(
+            sql_provider,
+            current_app.config['db_config']
+        ).make_transaction(request_data)
+        if order_id is None:
+            return 'Ошибка в транзакции'
+    except InvalidOrderDataException:
+        return 'Неверная структура заказа'
+
     session.pop('basket')
-    order_id: int = response.json()['order_id']
     return f'Создан заказ {order_id}'
 
 
 @blueprint_market.route('/my-orders')
-def user_orders() -> str | list[dict]:
+def user_orders() -> list[dict]:
     user_id: str | None = session.get('user_id')
-    response: requests.Response = requests.get(f'{MARKET_SERVICE_URL}/{user_id}/orders')
-    if response.json()['status'] != 200:
-        return 'Error during client orders search'
-    return response.json()['orders']
+    sql: str = f"SELECT * FROM orders WHERE user_id={user_id}"
+    orders: list[dict] = select_dict(current_app.config['db_config'], sql)
+    return orders
 
 
 @blueprint_market.route('/clear-basket')
