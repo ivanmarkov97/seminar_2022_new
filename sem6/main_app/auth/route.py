@@ -1,5 +1,4 @@
 import os
-import json
 from base64 import b64encode
 
 import requests
@@ -41,7 +40,7 @@ def start_auth():
         if not is_internal:
             # make external API call
             response = requests.get(
-                f'http://127.0.0.1:5002/api/auth/find-user',
+                'http://127.0.0.1:5002/api/auth/find-user',
                 headers={'Authorization': create_basic_auth_token(login, password)}
             )
 
