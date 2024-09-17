@@ -5,6 +5,9 @@
     <title>Результат поиска продукта</title>
 </head>
 <body>
+    {% if context.error_message %}
+    <h1>Ошибка: {{ context.error_message }}</h1>
+    {% else %}
     <h1 align="center"> Описание продукта </h1>
     <br><br>
     <center>
@@ -24,5 +27,6 @@
         </table>
     </center>
     <br><br>
+    {% endif %}
 </body>
 </html>
