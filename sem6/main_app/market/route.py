@@ -43,7 +43,7 @@ def market_index_handler():
     )
 
 
-@blueprint_market.route('/', methods=['GET'])
+@blueprint_market.route('/', methods=['POST'])
 def market_add_item_handler():
     response = add_product_to_basket(request.form, current_app.config['db_config'], sql_provider, session.get('basket', {}))
     return set_basket_in_session(response.basket) if response.status else render_template('market/item_missing.html')
