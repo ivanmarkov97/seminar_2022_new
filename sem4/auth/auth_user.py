@@ -7,30 +7,31 @@ from database.operations import select_dict
 
 @dataclass
 class AuthUserResponse:
-    data: tuple | None
-    schema: list | None
+    data: dict | None
     error_message: str
     status: bool
 
 
-def auth_user_with_form(web_form, session, db_config, provider):
+def find_user_with_form(web_form, db_config, provider):
+    data = None
+    status = False
+    error_message = ''
+
     login = web_form.get('login')
     password = web_form.get('password')
     if login:
-        user_info = define_user(provider, login, password, db_config)
-        print('user_info', user_info)
+        user_info = find_user(provider, login, password, db_config)
         if user_info:
-            user_dict = user_info[0]
-            session['user_id'] = user_dict['user_id']
-            session['user_group'] = user_dict['user_group']
-            session.permanent = True
-            return redirect(url_for('menu_choice'))
+            status = True
+            data = user_info[0]
         else:
-            return render_template('input_login.html', message='Пользователь не найден')
-    return render_template('input_login.html', message='Повторите ввод')
+            error_message = 'User not found'
+    else:
+        error_message = 'Login and password not provided'
+    return AuthUserResponse(data=data, error_message=error_message, status=status)
 
 
-def define_user(provider, login, password, db_config):
+def find_user(provider, login, password, db_config):
     sql_internal = provider.get('internal_user.sql', dict(login=login, password=password))
     sql_external = provider.get('external_user.sql', dict(login=login, password=password))
 
