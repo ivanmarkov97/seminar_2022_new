@@ -38,7 +38,7 @@ def clear_basket_and_redirect(session):
 def market_index_handler():
     return render_template(
         'market/index.html',
-        items=get_all_products(current_app.config['db_config'], sql_provider).items,
+        items=cached_all_items_request(current_app.config['db_config'], sql_provider).items,
         basket_items=session.get('basket', {})
     )
 
