@@ -7,7 +7,7 @@ from database.operations import select_dict
 from database.sql_provider import SQLProvider
 from cache.wrapper import fetch_from_cache
 from utils import get_config_dir
-from .transactions import TransactionProcessor, InvalidOrderDataException
+from .market_operations import get_all_products, add_product_to_basket, make_transaction
 
 
 blueprint_market = Blueprint('bp_market', __name__, template_folder='templates', static_folder='static')
@@ -19,84 +19,50 @@ cache_config = json.load(open(get_config_dir() / 'cache.json'))
 def cached_all_items_request():
     import time
     time.sleep(10)
-    db_config = current_app.config['db_config']
-    sql = sql_provider.get('all_items.sql', {})
-    items = select_dict(db_config, sql)
-    return items
+    return get_all_products(current_app.config['db_config'], sql_provider)
 
 
-@blueprint_market.route('/', methods=['GET', 'POST'])
-def market_index():
-    if request.method == 'GET':
-        items = cached_all_items_request()
-        basket_items = session.get('basket', {})
-        return render_template(
-            'market/index.html',
-            items=items,
-            basket_items=basket_items
-        )
-    else:
-        db_config = current_app.config['db_config']
-        prod_id = request.form['prod_id']
-        sql = sql_provider.get('item_description.sql', dict(product_id=prod_id))
-        items = select_dict(db_config, sql)
-        if not items:
-            return render_template('market/item_missing.html')
+def set_basket_in_session(basket):
+    session['basket'] = basket
+    session.permanent = True
+    return redirect(url_for('bp_market.market_index_handler'))
 
-        item_description = items[0]
-        curr_basket = session.get('basket', {})
-        if prod_id in curr_basket:
-            curr_basket[prod_id]['count'] = curr_basket[prod_id]['count'] + 1
-        else:
-            curr_basket[prod_id] = {
-                'name': item_description['name'],
-                'price': item_description['price'],
-                'count': 1
-            }
-        session['basket'] = curr_basket
-        session.permanent = True
-        return redirect(url_for('bp_market.market_index'))
+
+def clear_basket_and_redirect(session):
+    if 'basket' in session:
+        session.pop('basket')
+    return redirect(url_for('bp_market.market_index_handler'))
+
+
+@blueprint_market.route('/', methods=['GET'])
+def market_index_handler():
+    return render_template(
+        'market/index.html',
+        items=get_all_products(current_app.config['db_config'], sql_provider).items,
+        basket_items=session.get('basket', {})
+    )
+
+
+@blueprint_market.route('/', methods=['GET'])
+def market_add_item_handler():
+    response = add_product_to_basket(request.form, current_app.config['db_config'], sql_provider, session.get('basket', {}))
+    return set_basket_in_session(response.basket) if response.status else render_template('market/item_missing.html')
 
 
 @blueprint_market.route('/buy', methods=['GET'])
-def market_transaction():
-    curr_basket = session.get('basket', {})
-    if not curr_basket:
+def market_transaction_handler():
+    if not session.get('basket', {}):
         return redirect(url_for('bp_market.market_index'))
-    user_id = session['user_id']
-    request_basket = []
-    for product in curr_basket:
-        request_basket.append({
-            'item_id': product,
-            'price': curr_basket[product]['price'],
-            'count': curr_basket[product]['count']
-        })
-    request_data = {'user_id': user_id, 'basket': request_basket}
-
-    try:
-        order_id = TransactionProcessor(
-            sql_provider,
-            current_app.config['db_config']
-        ).make_transaction(request_data)
-        if order_id is None:
-            return 'Ошибка в транзакции'
-    except InvalidOrderDataException:
-        return 'Неверная структура заказа'
-
-    session.pop('basket')
-    return f'Создан заказ {order_id}'
+    response = make_transaction(current_app.config['db_config'], sql_provider, session['basket'], session['user_id'])
+    return clear_basket_and_redirect(session) if response.status else response.error_message
 
 
 @blueprint_market.route('/my-orders')
 def user_orders():
-    user_id = session.get('user_id')
-    sql = f"SELECT * FROM orders WHERE user_id={user_id}"
-    orders = select_dict(current_app.config['db_config'], sql)
-    return orders
+    sql = f"SELECT * FROM orders WHERE user_id={session.get('user_id')}"
+    return select_dict(current_app.config['db_config'], sql)
 
 
 @blueprint_market.route('/clear-basket')
 def clear_basket():
-    if 'basket' in session:
-        session.pop('basket')
-    return redirect(url_for('bp_market.market_index'))
+    return clear_basket_and_redirect(session)

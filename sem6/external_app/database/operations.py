@@ -54,14 +54,3 @@ def call_proc(db_config, proc_name, *args):
             raise ValueError('Cursor not found')
         res = cursor.callproc(proc_name, args)
         return res
-
-
-def insert_many(db_config, sqls):
-    with DBContextManager(db_config, is_transaction=True) as cursor:
-        if cursor is None:
-            raise ValueError('Cursor not found')
-        n_insert = 0
-        for sql in sqls:
-            cursor.execute(sql)
-            n_insert += 1
-        return n_insert
