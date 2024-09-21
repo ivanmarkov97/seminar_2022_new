@@ -19,17 +19,3 @@ def all_products_handler():
 def product_description_handler():
     product_info = get_product(current_app.config['db_config'], request.form, provider)
     return render_template('db_result.html', context=product_info)
-
-
-# @blueprint_query.route('/', methods=['GET', 'POST'])
-# def queries():
-#     if request.method == 'GET':
-#         return render_template('product_form.html')
-#     else:
-#         input_product = request.form.get('product_name')
-#         if input_product:
-#             sql = provider.get('product.sql', dict(input_product=input_product))
-#             product_result, schema = select(current_app.config['db_config'], sql)
-#             return render_template('db_result.html', schema=schema, result=product_result)
-#         else:
-#             return "Repeat input"
