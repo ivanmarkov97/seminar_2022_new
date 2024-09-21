@@ -22,6 +22,7 @@
 ├── auth
 │     ├── __init__.py
 │     ├── routes.py  // Описание blueprint-а авторизации
+|     ├── auth_user.py  // Логика авторизации пользователя
 │     ├── sql
 │     │     ├── external_user.sql  // SQL-шаблон поиска внутреннего клиента
 │     │     └── internal_user.sql  // SQL-шаблон поиска внешнего клиента
@@ -33,12 +34,14 @@
 │     └── db.json  // Конфиг для подключения к БД
 ├── database
 │     ├── __init__.py
-│     ├── db_context_manager.py  // Класс для подключения к БД
-│     ├── db_work.py  // Множество функций для отправления запросов в БД
+│     ├── connection.py  // Класс для подключения к БД
+│     ├── operations.py  // Множество функций для отправления запросов в БД
 │     └── sql_provider.py  // Класс для предоставления готовых SQL-запросов
 ├── market
 │     ├── __init__.py
+│     ├── market_operations.py  // Логика работы корзины
 │     ├── routes.py  // Описание Blueprint-а покупки товара
+│     ├── transaction.py  // Логика проведения транзакций
 │     ├── sql
 │     │     ├── all_items.sql  // SQL-запрос для поиска всех товаров
 │     │     └── item_description.sql  // SQL-запрос для поиска товара по его ID
@@ -54,6 +57,7 @@
 ├── query
 │     ├── __init__.py
 │     ├── route.py  // Описание Blueprint-а для работы с запросами
+|     ├── product_display.py  // логика поиска товара в БД
 │     ├── sql
 │     │     └── product.sql  // Шаблон SQL-запроса для поиска продукта по ID или названию
 │     └── templates

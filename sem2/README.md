@@ -16,8 +16,8 @@
 ```
 ├── README.md
 ├── app.py  // точка входа
-├── db_context_manager.py  // класс для подключения к БД
-├── db_work.py  // функции для работы с БД
+├── connection.py  // класс для подключения к БД
+├── operations.py  // функции для работы с БД
 ├── static
 │       └── main.css  // CSS-файлы для стиля
 ├── templates

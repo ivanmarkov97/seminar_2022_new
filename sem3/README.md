@@ -21,12 +21,13 @@
 │        └── dbconfig.json  // конфиг для подключения к БД
 ├── database
 │        ├── __init__.py
-│        ├── db_context_manager.py  // класс для подключения к БД
-│        ├── db_work.py  // фукнции для работы с БД
+│        ├── connection.py  // класс для подключения к БД
+│        ├── operations.py  // фукнции для работы с БД
 │        └── sql_provider.py  // класс для получения SQL-запросов
 ├── query
 │        ├── __init__.py
 │        ├── route.py  // Описание blueprint-а для работы со сценарием простых запросов
+|        ├── product_display.py  // логика поиска товара в БД
 │        ├── sql
 │        │       └── product.sql  // Шаблон SQL-запроса в БД для получения товара
 │        └── templates
@@ -37,7 +38,7 @@
 │        ├── __init__.py
 │        └── route.py  // Описание blueprint-а для работы со сценарием отчетов
 ├── static
-│        └── sem3.css  // CSS-файл для поддержания стиля
+│        └── main.css  // CSS-файл для поддержания стиля
 ├── templates
 │        └── start_request.html  // Шаблон для отображения меню
 ```
