@@ -21,10 +21,10 @@ def set_user_session(session, web_form, db_config, provider):
 
 
 @blueprint_auth.route('/', methods=['GET'])
-def start_auth():
+def auth_input_handler():
     return render_template('input_login.html', message='')
 
 
 @blueprint_auth.route('/', methods=['POST'])
-def auth_user():
+def auth_process_handler():
     return set_user_session(session, request.form, current_app.config['db_config'], provider)
