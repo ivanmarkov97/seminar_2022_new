@@ -23,6 +23,21 @@ def select(db_config, sql):
         return result, schema
 
 
+def select_dict(db_config, sql):
+    """
+    Выполняет запрос (SELECT) к БД с указанным конфигом и запросом.
+
+    Args:
+        db_config: dict - Конфиг для подключения к БД.
+        sql: str - SQL-запрос.
+    Return:
+        Список словарей, где словарь это строка результата sql-запроса.
+    """
+
+    rows, schema = select(db_config, sql)
+    return [dict(zip(schema, row)) for row in rows]
+
+
 def call_proc(db_config, proc_name, *args):
     """
     Вызываем хранимую процедуру в БД.

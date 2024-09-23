@@ -19,4 +19,3 @@ def all_products_handler():
 def product_description_handler():
     product_info = get_product(current_app.config['db_config'], request.form, provider)
     return render_template('db_result.html', context=product_info)
-
